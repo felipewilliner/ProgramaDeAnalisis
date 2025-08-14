@@ -1,0 +1,147 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #f4f7fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Título */
+h1 {
+    text-align: center;
+    padding: 15px;
+    background: #2980b9;
+    color: white;
+    margin: 0;
+}
+
+/* Contenedor principal en dos columnas */
+.contenedor {
+    display: flex;
+    height: calc(100vh - 70px); /* Resta el alto del título */
+}
+
+/* Columnas */
+.columna {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.izquierda {
+    flex: 1;
+    background: white;
+    border-right: 1px solid #ddd;
+}
+
+.derecha {
+    flex: 2;
+    background: #eef2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 60%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button[type="submit"] {
+    background: #2980b9;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+    button[type="submit"]:hover {
+        background: #1c5980;
+    }
+
+#resultado {
+    margin-top: 20px;
+    padding: 10px;
+    background: #c8e6c9;
+    border: 1px solid #4caf50;
+    border-radius: 5px;
+    color: #2e7d32;
+    font-size: 1rem;
+}
+
+body > .contenedor .izquierda > button {
+    margin-top: 15px;
+    width: 100%;
+    background: #27ae60;
+}
+
+    body > .contenedor .izquierda > button:hover {
+        background: #1e874b;
+    }
+
+
+body.index {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f7fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+    body.index h1 {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-top: 50px;
+        color: white;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+
+    body.index p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        color: #34495e;
+    }
+
+    body.index button {
+        display: block;
+        width: 220px;
+        margin: 10px 0;
+        padding: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        body.index button:hover {
+            background: #1e874b;
+        }

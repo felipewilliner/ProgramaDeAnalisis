@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css">
+    <title></title>
+</head>
+<body>
+    <h1>Método de Bisección</h1>
+
+    <div class="contenedor">
+        <!-- Columna izquierda -->
+        <div class="columna izquierda">
+            <form id="biseccionForm">
+                <label>Función: <input id="funcion" type="text" value="x^2 - 4"></label><br>
+                <label>Xi: <input id="xi" type="number" step="any" value="0"></label><br>
+                <label>Xd: <input id="xd" type="number" step="any" value="5"></label><br>
+                <label>Iteraciones: <input id="iteraciones" type="number" value="100"></label><br>
+                <label>Tolerancia: <input id="tolerancia" type="number" step="any" value="0.0001"></label><br>
+                <button type="submit">Calcular</button>
+            </form>
+
+            <div id="resultado"></div>
+            <button onclick="location.href ='index.html'">Volver al menu principal</button>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="columna derecha">
+            <div id="ggb-element"></div>
+        </div>
+    </div>
+    <script src="CrearBiseccion.js"></script>
+
+    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+
+    <div id="ggb-element"></div>
+
+    <script>
+        var ggbApp = new GGBApplet({
+            appName: "graphing", // Tipo de app GeoGebra
+            width: 800,
+            height: 600,
+            showToolBar: false,
+            showAlgebraInput: false,
+            showMenuBar: false
+        }, true);
+
+        window.addEventListener("load", function () {
+            ggbApp.inject('ggb-element');
+        });
+
+        // Función para graficar
+        function graficarFuncion(funcion) {
+            // Cuando GeoGebra esté listo, agregamos la función
+            ggbApp.setValue("f", funcion); // Esto es conceptual, ver nota abajo
+        }
+    </script>
+</body>
+</html>
