@@ -5,19 +5,23 @@ VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrabajoAnalisis", "TrabajoAnalisis\TrabajoAnalisis.csproj", "{D591605D-65D8-4FE0-AFFF-1BE156DAA1DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entidades", "Entidades\Entidades.csproj", "{5B365B8A-E1D4-4E6B-A19B-6B8D9B1ED9A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entidades", "Entidades\Entidades.csproj", "{5B365B8A-E1D4-4E6B-A19B-6B8D9B1ED9A2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Html", "Html", "{BAC0DF25-F32A-44D1-804A-8515D8237918}"
 	ProjectSection(SolutionItems) = preProject
 		Biseccion.html = Biseccion.html
 		CrearBiseccion.js = CrearBiseccion.js
+		CrearNewtonRaphson.js = CrearNewtonRaphson.js
 		CrearReglaFalsa.js = CrearReglaFalsa.js
+		CrearSecante.js = CrearSecante.js
 		index.html = index.html
+		NewtonRaphson.html = NewtonRaphson.html
 		ReglaFalsa.html = ReglaFalsa.html
+		Secante.html = Secante.html
 		styles.css = styles.css
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{C9559DFE-E357-42E0-B688-2EC20FC5125F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{C9559DFE-E357-42E0-B688-2EC20FC5125F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

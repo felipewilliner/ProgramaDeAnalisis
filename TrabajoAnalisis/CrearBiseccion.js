@@ -48,7 +48,8 @@ document.getElementById('biseccionForm').addEventListener('submit', function (ev
             } else {
                 document.getElementById('resultado').innerHTML = `
             <p> ${data.mensaje}</p>
-            <p><strong>Raiz:</strong> ${data.raiz ?? 'N/A'}</p>`;
+            <p><strong>Raiz:</strong> ${data.raiz ?? 'N/A'}</p>
+            <p><strong>Iteraciones:</strong> ${data.iteraciones}</p>`;
                 // Crear un punto en la raíz sobre el eje X
                 ggbApplet.evalCommand(`R = (${data.raiz}, 0)`);
                 ggbApplet.setPointSize("R", 5); // Tamaño del punto

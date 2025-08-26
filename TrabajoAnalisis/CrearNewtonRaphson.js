@@ -2,31 +2,29 @@ document.addEventListener("DOMContentLoaded", function (event) {
     console.info("Formulario de Biseccion Listo");
 });
 
-document.getElementById('reglaFalsaForm').addEventListener('submit', function (event) {
+document.getElementById('newtonRaphsonForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
     const funcion = document.getElementById('funcion').value;
     const xi = document.getElementById('xi').value;
-    const xd = document.getElementById('xd').value;
     const iteraciones = document.getElementById('iteraciones').value;
     const tolerancia = document.getElementById('tolerancia').value;
 
     ggbApplet.evalCommand(`f(x) = ${funcion}`);
 
-    const datosReglaFalsa = {
+    const datosNewtonRaphson = {
         Funcion: funcion,
         Xi: xi,
-        Xd: xd,
         Iteraciones: iteraciones,
         Tolerancia: tolerancia
     };
 
-    fetch('http://localhost:5125/api/Unidad1/reglafalsa', {
+    fetch('http://localhost:5125/api/Unidad1/newtonraphson', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(datosReglaFalsa)
+        body: JSON.stringify(datosNewtonRaphson)
     })
         .then(response => {
             if (response.ok) {
@@ -42,15 +40,14 @@ document.getElementById('reglaFalsaForm').addEventListener('submit', function (e
             if (!data.success) {
 
                 document.getElementById('resultado').innerHTML = `
-                <p style="color:red;"><strong style ="color:red;">Error:</strong> La raiz no esta en el intervalo indicado. ${data.mensaje}</p>
+                <p style="color:red;"><strong style ="color:red;">Error:</strong>  ${data.mensaje}</p>
             `;
 
             } else {
                 document.getElementById('resultado').innerHTML = `
-            <p>${data.mensaje}</p>
+            <p> ${data.mensaje}</p>
             <p><strong>Raiz:</strong> ${data.raiz ?? 'N/A'}</p>
-              <p><strong>Iteraciones:</strong> ${data.iteraciones}</p>
-              <p><strong>Error Relativo:</strong> ${data.error}</p>`;
+            <p><strong>Iteraciones:</strong> ${data.iteraciones}</p>`;
                 // Crear un punto en la raíz sobre el eje X
                 ggbApplet.evalCommand(`R = (${data.raiz}, 0)`);
                 ggbApplet.setPointSize("R", 5); // Tamaño del punto

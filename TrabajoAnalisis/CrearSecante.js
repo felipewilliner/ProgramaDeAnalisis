@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     console.info("Formulario de Biseccion Listo");
 });
 
-document.getElementById('reglaFalsaForm').addEventListener('submit', function (event) {
+document.getElementById('secanteForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
     const funcion = document.getElementById('funcion').value;
@@ -13,7 +13,7 @@ document.getElementById('reglaFalsaForm').addEventListener('submit', function (e
 
     ggbApplet.evalCommand(`f(x) = ${funcion}`);
 
-    const datosReglaFalsa = {
+    const datosSecante = {
         Funcion: funcion,
         Xi: xi,
         Xd: xd,
@@ -21,12 +21,12 @@ document.getElementById('reglaFalsaForm').addEventListener('submit', function (e
         Tolerancia: tolerancia
     };
 
-    fetch('http://localhost:5125/api/Unidad1/reglafalsa', {
+    fetch('http://localhost:5125/api/Unidad1/secante', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(datosReglaFalsa)
+        body: JSON.stringify(datosSecante)
     })
         .then(response => {
             if (response.ok) {

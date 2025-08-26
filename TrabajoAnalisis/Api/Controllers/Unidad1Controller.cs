@@ -34,6 +34,20 @@ namespace Api.Controllers
             return Ok(resultado);
         }
 
+        [HttpPost("newtonraphson")]
+        public IActionResult PostNewtonRaphson([FromBody] CerradosParam param)
+        {
+            var resultado = llamar.NewtonRaphson(param);
+            return Ok(resultado);
+        }
+
+        [HttpPost("secante")]
+        public IActionResult PostSecante([FromBody] CerradosParam param)
+        {
+            var resultado = llamar.Secante(param);
+            return Ok(resultado);
+        }
+
 
     }
 }
