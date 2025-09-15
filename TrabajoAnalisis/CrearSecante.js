@@ -42,8 +42,16 @@ document.getElementById('secanteForm').addEventListener('submit', function (even
             if (!data.success) {
 
                 document.getElementById('resultado').innerHTML = `
-                <p style="color:red;"><strong style ="color:red;">Error:</strong> La raiz no esta en el intervalo indicado. ${data.mensaje}</p>
-            `;
+                 <p style="color:red;">
+                      <strong style="color:red;">Error:</strong> ${data.mensaje}
+                </p>
+                 <p style="color:red;">
+                      <strong style="color:red;">Raiz:</strong> ${data.raiz ?? 'N/A'}
+                 </p>
+                 <p style="color:red;">
+                       <strong style="color:red;">Iteraciones:</strong> ${data.iteraciones}
+                 </p>
+    `;
 
             } else {
                 document.getElementById('resultado').innerHTML = `

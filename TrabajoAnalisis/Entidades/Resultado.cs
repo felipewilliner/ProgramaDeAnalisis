@@ -8,11 +8,13 @@ namespace TrabajoAnalisis
 {
     public class Resultado
     {
-        public string Mensaje {  get; set; }
-        public bool Success {  get; set; }
-        public double Raiz { get; set; }
-        public int Iteraciones {  get; set; }
-        public double Error {  get; set; }
+        private double _raiz;
+        private double _error;
+        public string Mensaje { get; set; }
+        public bool Success { get; set; }
+        public double Raiz { get => Math.Round(_raiz, 3); set => _raiz = value; }
+        public int Iteraciones { get; set; }
+        public double Error { get => Math.Round(_error, 8); set => _error = value; }
 
 
     }

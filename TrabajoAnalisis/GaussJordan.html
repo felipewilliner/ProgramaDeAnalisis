@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css">
+    <title>Gauss Jordan</title>
+</head>
+<body>
+    <h1>Método de Gauss-Jordan</h1>
+    <div class="contenedor">
+        <!-- Columna izquierda -->
+        <div class="columna izquierda">
+            <form id="gaussJordanForm">
+                <label>
+                    Dimension:
+                    <input type="number" id="dimension" value="3" min="2" max="8">
+                </label>
+                <button type="button" onclick="generarMatriz()">Generar matriz</button>
+                <div id="matriz-container"></div>
+                <button type="submit">Calcular</button>
+            </form>
+
+
+            <button onclick="location.href='index.html'">Volver al menú principal</button>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="columna derecha">
+            <div id="info"></div>
+        </div>
+    </div>
+
+    <script src="GaussJordan.js"></script>
+</body>
+</html>

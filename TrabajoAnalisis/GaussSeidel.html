@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css">
+    <title>Gauss-Seidel</title>
+</head>
+<body>
+    <h1>Método de Gauss-Seidel</h1>
+    <div class="contenedor">
+        <!-- Columna izquierda -->
+        <div class="columna izquierda">
+            <form id="gaussSeidelForm">
+                <label>
+                    Dimensiones:
+                    <input type="number" id="dimension" value="3" min="2" max="8">
+                </label>
+
+                <label>
+                    Tolerancia:
+                    <input type="number" id="tolerancia" value="0.01" step="0.01">
+                </label>
+
+                <label>
+                    Máx. Iteraciones:
+                    <input type="number" id="maxIteraciones" value="100" min="10" max="1000">
+                </label>
+
+                <button type="button" onclick="generarMatriz()">Generar matriz</button>
+                <div id="matriz-container"></div>
+                <button type="submit" >Calcular</button>
+            </form>
+
+            
+            <button onclick="location.href='index.html'">Volver al menú principal</button>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="columna derecha">
+            <div id="info"></div>
+        </div>
+    </div>
+
+    <script src="GaussSeidel.js"></script>
+</body>
+</html>

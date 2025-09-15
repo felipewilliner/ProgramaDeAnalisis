@@ -1,5 +1,6 @@
 ﻿using Calculus;
 using Entidades;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -47,7 +48,7 @@ namespace TrabajoAnalisis
                     xrAnterior = xr;
 
                     resultado.Error = error;
-                    resultado.Iteraciones = i;
+                    resultado.Iteraciones = i + 1;
                 }
             }
 
@@ -92,7 +93,7 @@ namespace TrabajoAnalisis
                         param.Xd = xr;
                     }
                     xrAnterior = xr;
-                    resultado.Iteraciones = i;
+                    resultado.Iteraciones = i + 1;
                     resultado.Error = error;
                 }
 
@@ -128,29 +129,31 @@ namespace TrabajoAnalisis
                     if (double.IsNaN(derivada) || Math.Abs(derivada) <= param.Tolerancia)
                     {
                         resultado.Success = false;
+                        resultado.Raiz = xr;
                         resultado.Mensaje = "El metodo diverge";
-                        resultado.Iteraciones = i;
+                        resultado.Iteraciones = i + 1;
                         resultado.Error = error;
                         break;
                     }
                     else
                     {
                         xr = param.Xi - (AnalizadorDeFunciones.EvaluaFx(param.Xi) / derivada);
-                        if((xrAnterior2 == xr && i >= 2))
+                        if ((xrAnterior2 == xr && i >= 2))
                         {
                             resultado.Success = false;
                             resultado.Mensaje = "El metodo diverge por bucle";
-                            resultado.Iteraciones = i;
+                            resultado.Iteraciones = i + 1;
                             resultado.Error = error;
                             break;
                         }
                     }
 
-                    if (double.IsNaN(xr) || Math.Abs(derivada)<=param.Tolerancia)
+                    if (double.IsNaN(xr))
                     {
                         resultado.Success = false;
                         resultado.Mensaje = "El metodo diverge";
-                        resultado.Iteraciones = i;
+                        resultado.Raiz = xr;
+                        resultado.Iteraciones = i + 1;
                         resultado.Error = error;
                         break;
                     }
@@ -160,7 +163,7 @@ namespace TrabajoAnalisis
                         resultado.Raiz = xr;
                         resultado.Success = true;
                         resultado.Mensaje = "Raiz encontrada";
-                        resultado.Iteraciones = i;
+                        resultado.Iteraciones = i + 1;
                         resultado.Error = error;
                         break;
                     }
@@ -207,7 +210,7 @@ namespace TrabajoAnalisis
             }
             else
             {
-
+                double xrAnterior2 = 0;
                 double xrAnterior = 0;
                 double xr = 0;
                 double error = 0;
@@ -222,21 +225,34 @@ namespace TrabajoAnalisis
                     {
                         resultado.Success = false;
                         resultado.Mensaje = "El metodo diverge";
-                        resultado.Iteraciones = i;
+                        resultado.Iteraciones = i + 1;
                         resultado.Error = error;
+                        resultado.Raiz = xr;
                         return resultado;
                     }
-                    error = Math.Abs((xr - xrAnterior) / xr);
+                    if (Math.Abs(xrAnterior2 - xr) < param.Tolerancia && i >= 2)
+                    {
+                        resultado.Success = false;
+                        resultado.Mensaje = "El metodo diverge por bucle";
+                        resultado.Iteraciones = i + 1;
+                        resultado.Error = error;
+                        break;
+                    }
+                    if (xr != 0) { error = Math.Abs((xr - xrAnterior) / xr); }
+                    double aver = Math.Abs(AnalizadorDeFunciones.EvaluaFx(xr));
                     if (Math.Abs(AnalizadorDeFunciones.EvaluaFx(xr)) <= param.Tolerancia || error <= param.Tolerancia)
                     {
+                        Debug.WriteLine($"xr = {xr}, f(xr) = {AnalizadorDeFunciones.EvaluaFx(xr)}, error = {error}, tol = {param.Tolerancia}");
                         resultado.Raiz = xr;
                         resultado.Success = true;
                         resultado.Mensaje = "Raiz encontrada";
-                        resultado.Iteraciones = i;
+                        resultado.Iteraciones = i + 1;
                         resultado.Error = error;
                         return resultado;
                     }
-                    param.Xi = xr;
+                    xrAnterior2 = xrAnterior;
+                    param.Xi = param.Xd;
+                    param.Xd = xr;
                     xrAnterior = xr;
                 }
 

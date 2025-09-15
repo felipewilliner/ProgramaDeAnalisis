@@ -40,14 +40,23 @@ document.getElementById('newtonRaphsonForm').addEventListener('submit', function
             if (!data.success) {
 
                 document.getElementById('resultado').innerHTML = `
-                <p style="color:red;"><strong style ="color:red;">Error:</strong>  ${data.mensaje}</p>
-            `;
+                 <p style="color:red;">
+                      <strong style="color:red;">Error:</strong> ${data.mensaje}
+                </p>
+                 <p style="color:red;">
+                      <strong style="color:red;">Raiz:</strong> ${data.raiz ?? 'N/A'}
+                 </p>
+                 <p style="color:red;">
+                       <strong style="color:red;">Iteraciones:</strong> ${data.iteraciones}
+                 </p>
+    `;
 
             } else {
                 document.getElementById('resultado').innerHTML = `
             <p> ${data.mensaje}</p>
-            <p><strong>Raiz:</strong> ${data.raiz ?? 'N/A'}</p>
-            <p><strong>Iteraciones:</strong> ${data.iteraciones}</p>`;
+   <p><strong>Raiz:</strong> ${data.raiz ?? 'N/A'}</p>
+              <p><strong>Iteraciones:</strong> ${data.iteraciones}</p>
+              <p><strong>Error Relativo:</strong> ${data.error}</p>`;
                 // Crear un punto en la raíz sobre el eje X
                 ggbApplet.evalCommand(`R = (${data.raiz}, 0)`);
                 ggbApplet.setPointSize("R", 5); // Tamaño del punto
