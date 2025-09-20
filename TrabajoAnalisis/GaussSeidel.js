@@ -162,9 +162,5 @@ function mostrarResultadoGaussSeidel(data) {
                 <span style="color:#e74c3c; font-weight:bold;">${valor}</span>
             </div>`;
     }
-
-  
-    </div>`;
-
     infoDiv.innerHTML = html;
 }

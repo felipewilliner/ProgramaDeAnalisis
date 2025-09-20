@@ -10,7 +10,7 @@ namespace Entidades
     {
         public int Dimension { get; set; }
         public double[][] Matriz { get; set; }
-        public double Tolerancia { get; set; } = 0.0001;
-        public int MaxIteraciones { get; set; } = 100;
+        public double Tolerancia { get; set; }
+        public int MaxIteraciones { get; set; }
     }
 }

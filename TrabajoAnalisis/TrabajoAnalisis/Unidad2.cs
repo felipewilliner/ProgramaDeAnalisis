@@ -124,7 +124,7 @@ namespace TrabajoAnalisis
             double[] vectorAnterior = new double[n];
             bool convergio = false;
             int iteracion = 0;
-            double errorMaximo = 0;
+            double error = 0;
 
             // Inicializar el vector resultado con ceros
             Array.Fill(vectorResultado, 0);
@@ -154,20 +154,24 @@ namespace TrabajoAnalisis
                     vectorResultado[i] = (matriz[i, n] - suma) / matriz[i, i];
                 }
 
-                // Verificar convergencia después de la primera iteración
+                // Verificar convergencia después de la primera iteración - CORREGIDO
                 if (iteracion > 1)
                 {
-                    errorMaximo = 0;
-                    convergio = true;
+
+                    convergio = true;  // Asumimos que converge hasta que se demuestre lo contrario
 
                     for (int i = 0; i < n; i++)
                     {
                         if (Math.Abs(vectorResultado[i]) > 1e-10) // Evitar división por cero
                         {
-                            double errorRelativo = Math.Abs((vectorResultado[i] - vectorAnterior[i]) / vectorResultado[i]);
-                            errorMaximo = Math.Max(errorMaximo, errorRelativo);
 
-                            if (errorRelativo > tolerancia)
+                            double errorAbsoluto = Math.Abs(vectorResultado[i] - vectorAnterior[i]);
+                            error = errorAbsoluto / Math.Abs(vectorResultado[i]);
+
+
+
+                            // Si algún error supera la tolerancia, NO converge
+                            if (error > tolerancia)
                             {
                                 convergio = false;
                             }
@@ -178,7 +182,7 @@ namespace TrabajoAnalisis
 
             // Preparar resultado final
             resultado.Iteraciones = iteracion;
-            resultado.ErrorFinal = errorMaximo;
+            resultado.ErrorFinal = error;
 
             if (convergio)
             {
@@ -189,15 +193,15 @@ namespace TrabajoAnalisis
             else
             {
                 resultado.Success = false;
-                resultado.Mensaje = $"El método no convergió después de {iteracion} iteraciones. Error máximo: {errorMaximo:F6}";
+                resultado.Mensaje = $"El método no convergió después de {iteracion} iteraciones. Error máximo: {error:F6}";
                 // Aún así retornamos los valores actuales
                 Array.Copy(vectorResultado, resultado.Resultados, n);
             }
 
             return resultado;
-        }  
+        }
+
+
     }
-
-
 }
 

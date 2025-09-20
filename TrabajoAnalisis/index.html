@@ -1,19 +1,30 @@
 ﻿<!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Bienvenido</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="index">
     <h1>Bienvenido</h1>
     <p>Seleccione la acción que desea realizar</p>
-    <button onclick="location.href ='Biseccion.html'">Cargar Biseccion</button>
-    <button onclick="location.href ='ReglaFalsa.html'">Cargar Regla Falsa</button>
-    <button onclick="location.href ='Secante.html'">Cargar Secante</button>
-    <button onclick="location.href ='NewtonRaphson.html'">Cargar Newton-Raphson</button>
 
-    <button onclick="location.href ='GaussJordan.html'">Resolver con Gauss-Jordan</button>
+    <div id="contenedor-index"></div>
+    <div class="contenedor-index">
+        <div class="columna-index">
+            <h2>Unidad 1</h2>
+            <button onclick="location.href ='Biseccion.html'">Cargar Biseccion</button>
+            <button onclick="location.href ='ReglaFalsa.html'">Cargar Regla Falsa</button>
+            <button onclick="location.href ='Secante.html'">Cargar Secante</button>
+            <button onclick="location.href ='NewtonRaphson.html'">Cargar Newton-Raphson</button>
+        </div>
+
+        <div class="columna-index">
+            <h2>Unidad 2</h2>
+            <button onclick="location.href ='GaussJordan.html'">Resolver con Gauss-Jordan</button>
+            <button onclick="location.href ='GaussSeidel.html'">Resolver con Gauss-Seidel</button>
+        </div>
+    </div>
+    
 </body>
 </html>

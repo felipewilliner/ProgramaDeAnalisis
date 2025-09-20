@@ -145,3 +145,23 @@ body.index {
         body.index button:hover {
             background: #1e874b;
         }
+
+.contenedor-index {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente las columnas */
+    align-items: flex-start; /* Alinea arriba */
+    gap: 40px; /* Espacio entre columnas */
+    flex-wrap: nowrap; /* 🔑 Evita que una columna baje */
+}
+
+.columna-index {
+    display: flex;
+    flex-direction: column;   /* 🔑 Hace que el contenido vaya de arriba a abajo */
+    align-items: center;      /* Centra horizontalmente los botones */
+    flex: 1 1 250px;          /* Se adapta, con un mínimo de 250px */
+    max-width: 300px;         /* Máximo ancho por columna */
+    padding: 20px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
