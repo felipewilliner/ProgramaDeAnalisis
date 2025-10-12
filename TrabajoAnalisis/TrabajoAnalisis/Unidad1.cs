@@ -105,7 +105,10 @@ namespace TrabajoAnalisis
 
         public Resultado NewtonRaphson(CerradosParam param)
         {
-            param.Funcion = Regex.Replace(param.Funcion, @"e\^(.+?)(?=[\s\+\-\*\/\)]|$)", "exp($1)");
+            param.Funcion = Regex.Replace(param.Funcion, @"e\^(\([^()]*(?:\([^()]*\)[^()]*)*\)|[^\s\+\-\*\/\)]+)", "exp($1)");
+
+            // También manejar el caso sin paréntesis
+            param.Funcion = Regex.Replace(param.Funcion, @"e\^([^()\s\+\-\*\/]+)", "exp($1)");
             AnalizadorDeFunciones.Sintaxis(param.Funcion, 'x');
             Resultado resultado = new Resultado();
             if (Math.Abs(AnalizadorDeFunciones.EvaluaFx(param.Xi)) <= param.Tolerancia)
@@ -187,7 +190,10 @@ namespace TrabajoAnalisis
 
         public Resultado Secante(CerradosParam param)
         {
-            param.Funcion = Regex.Replace(param.Funcion, @"e\^(.+?)(?=[\s\+\-\*\/\)]|$)", "exp($1)");
+            param.Funcion = Regex.Replace(param.Funcion, @"e\^(\([^()]*(?:\([^()]*\)[^()]*)*\)|[^\s\+\-\*\/\)]+)", "exp($1)");
+
+            // También manejar el caso sin paréntesis
+            param.Funcion = Regex.Replace(param.Funcion, @"e\^([^()\s\+\-\*\/]+)", "exp($1)");
             AnalizadorDeFunciones.Sintaxis(param.Funcion, 'x');
             Resultado resultado = new Resultado();
             if (Math.Abs(AnalizadorDeFunciones.EvaluaFx(param.Xi)) <= param.Tolerancia)

@@ -196,7 +196,7 @@ namespace TrabajoAnalisis
                 resultado.Mensaje = $"El método no convergió después de {iteracion} iteraciones. Error máximo: {error:F6}";
                 // Aún así retornamos los valores actuales
                 Array.Copy(vectorResultado, resultado.Resultados, n);
-            }
+            }   
 
             return resultado;
         }
