@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css">
+    <title>Regresión Lineal</title>
+    <style>
+        /* Estilos adicionales para la tabla de puntos */
+        #puntos-container {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #puntos-tabla input {
+            width: 40px; /* Ancho más pequeño para las coordenadas */
+            text-align: center;
+        }
+
+        .punto-fila button {
+            background: #e74c3c;
+            padding: 5px 10px;
+            margin-left: 5px;
+        }
+
+            .punto-fila button:hover {
+                background: #c0392b;
+            }
+    </style>
+</head>
+<body>
+    <h1>Regresión Lineal Simple</h1>
+    <div class="contenedor">
+        <div class="columna izquierda">
+            <form id="regresionLinealForm">
+                <label>
+                    Tolerancia (|r|):
+                    <input type="number" id="tolerancia" value="0.8" step="0.01" min="0" max="1">
+                </label>
+
+                <label style="font-weight: normal; margin-top: 10px;">
+                    Grado (Fijo en 1 para Regresión Lineal):
+                    <input type="number" id="grado" value="1" readonly style="background-color: #eee;">
+                </label>
+
+                <h3>Puntos (X, Y)</h3>
+                <div id="puntos-container">
+                    <div id="puntos-tabla">
+                    </div>
+                    <button type="button" onclick="agregarFilaPunto()" style="background: #3498db; width: 100%; margin-top: 10px;">
+                        Añadir Punto
+                    </button>
+                </div>
+
+                <button type="submit">Calcular Regresión</button>
+            </form>
+
+            <div id="resultado">
+            </div>
+
+            <button onclick="location.href='index.html'" style="background: #95a5a6;">Volver al menú principal</button>
+        </div>
+
+        <div class="columna derecha">
+            <div id="ggb-element"></div>
+        </div>
+    </div>
+
+    <script src="RegresionLineal.js"></script>
+    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+
+    <div id="ggb-element"></div>
+
+    <script>
+        var ggbApp = new GGBApplet({
+            appName: "graphing", // Tipo de app GeoGebra
+            width: 800,
+            height: 600,
+            showToolBar: false,
+            showAlgebraInput: false,
+            showMenuBar: false,
+       
+        }, true);
+
+        window.addEventListener("load", function () {
+            ggbApp.inject('ggb-element');
+        });
+
+        // Función para graficar
+        function graficarFuncion(funcion) {
+            // Cuando GeoGebra esté listo, agregamos la función
+            ggbApp.setValue("f", funcion); // Esto es conceptual, ver nota abajo
+        }
+    </script>
+</body>
+</html>

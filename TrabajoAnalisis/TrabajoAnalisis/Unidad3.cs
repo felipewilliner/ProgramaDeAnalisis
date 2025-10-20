@@ -1,6 +1,7 @@
 ﻿using Entidades;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -121,10 +122,10 @@ namespace TrabajoAnalisis
             // El algoritmo original calcula: Math.Sqrt((st-sr)/st) * 100.
             // Esto es un enfoque simplificado (r * 100), pero a menudo se usa r² * 100 como "porcentaje de variabilidad explicada". 
             // Siguiendo el algoritmo (Punto 9.a), calculamos r * 100.
-            double efectividad = r * 100;
+            double efectividad = Math.Abs(r) * 100;
 
             // 10. Devolver los resultados
-            resultado.Funcion = $"y = {a1:F4}x + {a0:F4}"; // Formato a 4 decimales
+            resultado.Funcion = $"y = {a1:F4}*x + {a0:F4}"; // Formato a 4 decimales
             resultado.PorcentajeEfectividad = $"{efectividad:F2}%"; // Formato a 2 decimales
 
             // a. Mensaje de efectividad de ajuste
@@ -139,6 +140,210 @@ namespace TrabajoAnalisis
 
             return resultado;
         }
+
+
+        private readonly Unidad2 _unidadesSolver = new Unidad2();
+
+        // --- Método GenerarMatrizPolinomial (Punto 1 del Algoritmo) ---
+        private double[][] GenerarMatrizPolinomial(List<xy> puntosCargados, int grado)
+        {
+            int n = puntosCargados.Count;
+            int dimension = grado + 1; // n+1 incógnitas (a0, a1, ..., an)
+
+            // La matriz es (grado + 1) x (grado + 2)
+            double[,] matriz = new double[dimension, dimension + 1];
+
+            // Realizar las sumatorias
+            for (int i = 0; i <= 2 * grado; i++) // Sumatorias de X^0 hasta X^(2*grado)
+            {
+                double sumXi = 0; // Sumatoria de X^i
+                double sumYi = 0; // Sumatoria de Y*X^i (solo para i <= grado)
+
+                foreach (var punto in puntosCargados)
+                {
+                    double x = punto.X;
+                    double y = punto.Y;
+
+                    sumXi += Math.Pow(x, i); // Sum(X^i)
+
+                    if (i <= grado)
+                    {
+                        sumYi += y * Math.Pow(x, i); // Sum(Y*X^i)
+                    }
+                }
+
+                // Llenar la matriz de ecuaciones normales
+                for (int fila = 0; fila < dimension; fila++)
+                {
+                    // Llenar coeficientes (matriz cuadrada)
+                    for (int col = 0; col < dimension; col++)
+                    {
+                        // La matriz en [fila, col] es la sumatoria de X^(fila + col)
+                        if (fila + col == i)
+                        {
+                            matriz[fila, col] = sumXi;
+                        }
+                    }
+
+                    // Llenar la columna de términos independientes (matriz[fila, dimension] = Sum(Y*X^fila))
+                    if (fila == i && i <= grado)
+                    {
+                        matriz[fila, dimension] = sumYi;
+                    }
+                }
+            }
+
+            // Convertir double[,] a double[][] para usar con Unidad2/EcuacionesParam
+            double[][] matrizResultante = new double[dimension][];
+            for (int i = 0; i < dimension; i++)
+            {
+                matrizResultante[i] = new double[dimension + 1];
+                for (int j = 0; j <= dimension; j++)
+                {
+                    matrizResultante[i][j] = matriz[i, j];
+                }
+            }
+
+            return matrizResultante;
+        }
+
+        // --- Nuevo Método Principal para Regresión Polinomial ---
+        public Unidad3Resultado CalcularRegresionPolinomial(Unidad3Param param)
+        {
+            var resultado = new Unidad3Resultado();
+            int grado = param.Grado;
+            int n = param.Puntos.Count;
+
+            if (n < grado + 1)
+            {
+                resultado.Funcion = "N/A";
+                resultado.PorcentajeEfectividad = "0.00%";
+                resultado.MensajeEfectividadAjuste = $"Se requieren al menos {grado + 1} puntos para un polinomio de grado {grado}.";
+                return resultado;
+            }
+
+            // 1. Generar la matriz de ecuaciones normales
+            double[][] matrizPolinomial = GenerarMatrizPolinomial(param.Puntos, grado);
+
+            // 2. Resolver la matriz con Gauss-Jordan
+            EcuacionesParam ecuacionParam = new EcuacionesParam
+            {
+                Dimension = grado + 1,
+                Matriz = matrizPolinomial
+            };
+
+            // Asume que Unidad2.ResolverGaussJordan toma EcuacionesParam y devuelve ResultadoEcuaciones
+            var resultadoGauss = _unidadesSolver.ResolverGaussJordan(ecuacionParam);
+
+            if (!resultadoGauss.Success)
+            {
+                resultado.Funcion = "N/A";
+                resultado.PorcentajeEfectividad = "0.00%";
+                resultado.MensajeEfectividadAjuste = "Fallo al resolver el sistema de ecuaciones con Gauss-Jordan: " + resultadoGauss.Mensaje;
+                return resultado;
+            }
+
+            double[] coeficientes = resultadoGauss.Resultados; // Vector [a0, a1, a2, ...]
+
+            // 3. Formar la función polinomial (Punto 2.a del Algoritmo)
+            StringBuilder sb = new StringBuilder("y = ");
+            for (int i = 0; i < coeficientes.Length; i++)
+            {
+                double ai = coeficientes[i];
+                if (Math.Abs(ai) < 1e-6) continue; // Ignorar coeficientes muy cercanos a cero
+
+                string ai_str = Math.Abs(ai).ToString("F4", CultureInfo.InvariantCulture);
+                string signo = ai >= 0 ? "+" : "-";
+
+                if (i == 0)
+                {
+                    // Término independiente a0
+                    sb.Append($"{signo} {ai_str}");
+                }
+                else
+                {
+                    // Términos a1x, a2x^2, ...
+                    sb.Append($" {signo} {ai_str}x");
+                    if (i > 1)
+                    {
+                        sb.Append($"^{i}");
+                    }
+                }
+            }
+            // Limpiar el '+' inicial si a0 > 0
+            resultado.Funcion = sb.ToString().Replace("y = +", "y = ").Trim();
+            if (resultado.Funcion.StartsWith("y = -")) // Si es negativo, el signo ya está bien
+            {
+                resultado.Funcion = "y = " + resultado.Funcion.Substring(4).Trim();
+            }
+
+
+            // 4. Calcular el coeficiente de correlación r (Punto 2.b del Algoritmo)
+            double sumY = 0;
+            double st = 0; // Suma de los cuadrados totales
+            double sr = 0; // Suma de los cuadrados de los residuos
+
+            foreach (var punto in param.Puntos)
+            {
+                sumY += punto.Y;
+            }
+            double y_bar = sumY / n;
+
+            foreach (var punto in param.Puntos)
+            {
+                double x = punto.X;
+                double y = punto.Y;
+
+                // Calcular y_predicho (suma = a0 + a1x + a2x^2 + ...)
+                double y_predicho = 0;
+                for (int i = 0; i < coeficientes.Length; i++)
+                {
+                    y_predicho += coeficientes[i] * Math.Pow(x, i);
+                }
+
+                // st += (y - y_bar)^2
+                st += Math.Pow((y - y_bar), 2);
+
+                // sr += (y - y_predicho)^2
+                sr += Math.Pow((y - y_predicho), 2);
+            }
+
+            // Cálculo de r
+            double r_cuadrado = 0;
+            if (st > 1e-10) // Evitar división por cero si todas las Y son iguales
+            {
+                // Coeficiente de Determinación (r^2)
+                r_cuadrado = (st - sr) / st;
+            }
+            else
+            {
+                r_cuadrado = 1.0; // Ajuste perfecto si todas las Y son iguales.
+            }
+
+            // Coeficiente de correlación r = Math.Sqrt(r^2)
+            double r = Math.Sqrt(Math.Abs(r_cuadrado)); // Usamos Math.Abs() para prevenir r^2 negativo por errores numéricos
+
+            // Efectividad y mensaje
+            double efectividad = r * 100;
+
+            resultado.PorcentajeEfectividad = $"{efectividad:F2}%";
+
+            if (r >= param.Tolerancia)
+            {
+                resultado.MensajeEfectividadAjuste = $"El ajuste es EFECTIVO. |r| ({r:F4}) es mayor o igual a la Tolerancia ({param.Tolerancia:F4}).";
+            }
+            else
+            {
+                resultado.MensajeEfectividadAjuste = $"El ajuste NO ES EFECTIVO. |r| ({r:F4}) es menor que la Tolerancia ({param.Tolerancia:F4}).";
+            }
+
+            return resultado;
+        }
     }
 }
-}
+
+
+
+
+
+

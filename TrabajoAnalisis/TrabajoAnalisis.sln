@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Html", "Html", "{BAC0DF25-F
 		index.html = index.html
 		NewtonRaphson.html = NewtonRaphson.html
 		ReglaFalsa.html = ReglaFalsa.html
+		RegresionLineal.html = RegresionLineal.html
+		RegresionLineal.js = RegresionLineal.js
+		RegresionPolinomial.html = RegresionPolinomial.html
+		RegresionPolinomial.js = RegresionPolinomial.js
 		Secante.html = Secante.html
 		styles.css = styles.css
 	EndProjectSection

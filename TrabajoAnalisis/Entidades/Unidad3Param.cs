@@ -15,7 +15,6 @@ namespace Entidades
         public Unidad3Param()
         {
             Puntos = new List<xy>();
-            Tolerancia = 0.8;
         }
     }
 }
