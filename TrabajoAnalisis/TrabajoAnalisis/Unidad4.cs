@@ -27,10 +27,10 @@ namespace TrabajoAnalisis
 
            
 
-            if (AnalizadorDeFunciones.Sintaxis(funcion, 'x'))
+            if (!AnalizadorDeFunciones.Sintaxis(funcion, 'x'))
             {
                 // Devolvemos un mensaje de error si la sintaxis falla
-                return "Función mal ingresada o sintaxis incorrecta. Código: ";
+                return "Funcion mal ingresada o sintaxis incorrecta. Código: ";
             }
             return string.Empty;
         }
@@ -196,7 +196,7 @@ namespace TrabajoAnalisis
                     }
                     if (param.SubintervalosN % 2 != 0)
                     {
-                        resultado.Mensaje = "Simpson 1/3 Múltiple requiere una cantidad PAR de subintervalos (n). Para impares use 'Simpson Combinado'.";
+                        resultado.Mensaje = "Simpson 1/3 Multiple requiere una cantidad PAR de subintervalos (n). Para impares use 'Simpson Combinado'.";
                         return resultado;
                     }
                     area = Simpson1_3Multiple(param.Xi, param.Xd, param.SubintervalosN);
@@ -215,7 +215,7 @@ namespace TrabajoAnalisis
                     }
                     if (param.SubintervalosN < 3 && param.SubintervalosN % 2 != 0)
                     {
-                        resultado.Mensaje = "Para n impar, n debe ser al menos 3 para usar la combinación 1/3 y 3/8.";
+                        resultado.Mensaje = "Para n impar, n debe ser al menos 3 para usar la combinacion 1/3 y 3/8.";
                         return resultado;
                     }
                     // Despachar al método combinado que maneja el caso par/impar
@@ -223,20 +223,20 @@ namespace TrabajoAnalisis
                     break;
 
                 default:
-                    resultado.Mensaje = "Método de integración no reconocido.";
+                    resultado.Mensaje = "Metodo de integración no reconocido.";
                     return resultado;
             }
 
             // 3. Devolver Resultado
             if (double.IsNaN(area) || double.IsInfinity(area))
             {
-                resultado.Mensaje = "El cálculo resultó en un valor no numérico (NaN/Infinito). Revise la función y los límites.";
+                resultado.Mensaje = "El cálculo resulto en un valor no numérico (NaN/Infinito). Revise la funcion y los limites.";
                 return resultado;
             }
 
             resultado.Area = area;
             resultado.Success = true;
-            resultado.Mensaje = "Área calculada con éxito.";
+            resultado.Mensaje = "Area calculada con éxito.";
             return resultado;
         }
     }

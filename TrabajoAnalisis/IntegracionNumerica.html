@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css">
+    <title>Integración Numérica</title>
+</head>
+<body>
+    <h1>Unidad 4: Integración Numérica</h1>
+
+    <div class="contenedor">
+        <div class="columna izquierda">
+            <form id="integracionForm">
+                <h3>Datos de Entrada</h3>
+
+                <label>Función F(x): <input id="funcion" type="text" value="x^2" required></label><br>
+                <div style="display: flex; gap: 10px;">
+                    <label>Xi: <input id="xi" type="number" step="any" value="0" required></label>
+                    <label>Xd: <input id="xd" type="number" step="any" value="2" required></label>
+                </div>
+
+                <label>
+                    Subintervalos (n):
+                    <input id="subintervalosN" type="number" value="10" min="1">
+                </label>
+
+                <label>
+                    Método:
+                    <select id="metodo" required>
+                        <option value="Trapecios Simple">Trapecios Simple</option>
+                        <option value="Trapecios Múltiple">Trapecios Múltiple</option>
+                        <option value="Simpson 1/3 Simple">Simpson 1/3 Simple</option>
+                        <option value="Simpson 1/3 Múltiple">Simpson 1/3 Múltiple (n debe ser par)</option>
+                        <option value="Simpson 3/8 Simple">Simpson 3/8 Simple</option>
+                        <option value="Simpson Combinado">Simpson Combinado</option>
+                    </select>
+                </label>
+
+                <button type="submit">Calcular</button>
+            </form>
+
+            <div id="mensaje-error" style="margin-top: 10px;"></div>
+            <button onclick="location.href ='index.html'">Volver al menu principal</button>
+        </div>
+
+        <<div class="columna derecha">
+
+    <div id="ggb-element" style="margin-top: 20px;"></div>
+</div>
+    </div>
+
+    <script src="IntegracionNumerica.js"></script>
+    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+    <script>
+        var ggbApp = new GGBApplet({
+            appName: "graphing",
+            width: 800,
+            height: 600,
+            showToolBar: false,
+            showAlgebraInput: false,
+            showMenuBar: false
+        }, true);
+
+        window.addEventListener("load", function () {
+            ggbApp.inject('ggb-element');
+        });
+    </script>
+</body>
+</html>
