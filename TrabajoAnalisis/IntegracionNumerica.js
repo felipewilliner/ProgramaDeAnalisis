@@ -32,9 +32,16 @@ document.getElementById('integracionForm').addEventListener('submit', function (
     // 1. Graficar función en GeoGebra (similar a Unidad 1)
     if (window.ggbApplet) {
         try {
+
+            let funcionGeogebra = funcion
+                .replace(/log/gi, 'ln')
+            
+            funcionGeogebra = funcion.replace(/e\^x/g, 'exp(x)');
+ 
+
             // Limpiar y trazar la función
             window.ggbApplet.deleteObject('a');
-            window.ggbApplet.evalCommand(`f(x) = ${funcion}`);
+            window.ggbApplet.evalCommand(`f(x) = ${funcionGeogebra}`);
 
             // Trazar el área para visualización
             window.ggbApplet.evalCommand(`Integral(f, ${xi}, ${xd})`);

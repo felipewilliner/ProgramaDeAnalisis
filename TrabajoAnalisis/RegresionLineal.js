@@ -125,8 +125,8 @@ function mostrarResultado(data, puntos) {
 
     resultadoDiv.innerHTML = `
         <div style="margin-top:20px;">
-            <h3>Resultados de Regresión</h3>
-            <p><strong>Función de la Recta:</strong> <code>${data.funcion}</code></p>
+            <h3>Resultados de Regresion</h3>
+            <p><strong>Funcion de la Recta:</strong> <code>${data.funcion}</code></p>
             <p><strong>Efectividad (r*100):</strong> ${data.porcentajeEfectividad}</p>
             <div style="padding: 10px; border-radius: 5px; background: ${efectividadBg}; color: ${efectividadColor}; border: 1px solid ${efectividadColor};">
                 <strong>Mensaje de Ajuste:</strong> ${data.mensajeEfectividadAjuste}
