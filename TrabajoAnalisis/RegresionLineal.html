@@ -5,33 +5,14 @@
     <link rel="stylesheet" href="styles.css">
     <title>Regresión Lineal</title>
     <style>
-        /* Estilos adicionales para la tabla de puntos */
-        #puntos-container {
-            margin-top: 15px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        #puntos-tabla input {
-            width: 40px; /* Ancho más pequeño para las coordenadas */
-            text-align: center;
-        }
-
-        .punto-fila button {
-            background: #e74c3c;
-            padding: 5px 10px;
-            margin-left: 5px;
-        }
-
-            .punto-fila button:hover {
-                background: #c0392b;
-            }
+        /* ... (tus estilos .punto-fila, etc. van aquí) ... */
     </style>
 </head>
 <body>
     <h1>Regresión Lineal Simple</h1>
+
     <div class="contenedor">
+
         <div class="columna izquierda">
             <form id="regresionLinealForm">
                 <label>
@@ -59,38 +40,47 @@
             <div id="resultado">
             </div>
 
+            <div id="modificar-recta-container" style="display: none; margin-top: 15px; padding: 10px; border: 1px dashed #2980b9; border-radius: 5px;">
+                <label>
+                    Función Modificada:
+                    <input type="text" id="funcion-modificada" style="width: 100%; margin-top: 5px;">
+                </label>
+                <button type="button" id="btn-recalcular-r" style="background: #e67e22; width: 100%; margin-top: 10px;">
+                    Recalcular Correlación (r)
+                </button>
+                <div id="resultado-modificado" style="margin-top: 10px;"></div>
+            </div>
+
             <button onclick="location.href='index.html'" style="background: #95a5a6;">Volver al menú principal</button>
+
         </div>
 
         <div class="columna derecha">
             <div id="ggb-element"></div>
         </div>
+
     </div>
 
     <script src="RegresionLineal.js"></script>
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
 
-    <div id="ggb-element"></div>
-
     <script>
         var ggbApp = new GGBApplet({
-            appName: "graphing", // Tipo de app GeoGebra
+            appName: "graphing",
             width: 800,
             height: 600,
             showToolBar: false,
             showAlgebraInput: false,
             showMenuBar: false,
-       
         }, true);
 
         window.addEventListener("load", function () {
             ggbApp.inject('ggb-element');
         });
 
-        // Función para graficar
+        // Función para graficar (conceptual)
         function graficarFuncion(funcion) {
-            // Cuando GeoGebra esté listo, agregamos la función
-            ggbApp.setValue("f", funcion); // Esto es conceptual, ver nota abajo
+            ggbApp.setValue("f", funcion);
         }
     </script>
 </body>

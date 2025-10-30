@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace TrabajoAnalisis
@@ -335,6 +336,140 @@ namespace TrabajoAnalisis
             else
             {
                 resultado.MensajeEfectividadAjuste = $"El ajuste NO ES EFECTIVO. |r| ({r:F4}) es menor que la Tolerancia ({param.Tolerancia:F4}).";
+            }
+
+            return resultado;
+        }
+
+
+
+        // --- Método Helper para extraer coeficientes de la recta (Punto 5 del Algoritmo) ---
+        private Tuple<double, double> ObtenerCoeficientesFuncion(string funcion)
+        {
+            if (string.IsNullOrWhiteSpace(funcion))
+                throw new ArgumentException("La función no puede estar vacía.");
+
+            // Expresión regular adaptada para manejar espacios y signos opcionales
+            var regex = new Regex(@"y\s*=\s*([+-]?\d+(?:[.,]\d+)?)(\*?x)?\s*([+-]\s*\d+(?:[.,]\d+)?)?");
+            var match = regex.Match(funcion.Replace(" ", "")); // Limpiar espacios
+
+            if (!match.Success)
+            {
+                // Intento alternativo (si solo es 'y = a1x' o 'y = a0')
+                regex = new Regex(@"y\s*=\s*([+-]?\d+(?:[.,]\d+)?)(\*?x)?");
+                match = regex.Match(funcion.Replace(" ", ""));
+
+                if (!match.Success)
+                {
+                    // Intento solo a0
+                    regex = new Regex(@"y\s*=\s*([+-]?\d+(?:[.,]\d+)?)");
+                    match = regex.Match(funcion.Replace(" ", ""));
+                    if (!match.Success)
+                        throw new FormatException("Formato inválido. Ejemplo esperado: y = 2.5x - 1.3");
+                }
+            }
+
+            string a1Str = "0";
+            string a0Str = "0";
+
+            // Lógica de parsing adaptada
+            if (match.Groups[2].Value.Contains("x")) // Si 'x' está presente, el grupo 1 es a1
+            {
+                a1Str = match.Groups[1].Value.Replace(',', '.');
+                if (match.Groups[3].Success) // Si hay un grupo 3, es a0
+                {
+                    a0Str = match.Groups[3].Value.Replace(',', '.');
+                }
+            }
+            else // Si 'x' no está presente, el grupo 1 es a0
+            {
+                a0Str = match.Groups[1].Value.Replace(',', '.');
+            }
+
+            // Manejo de 'y = x' (a1 = 1) o 'y = -x' (a1 = -1)
+            if (a1Str == "+" || a1Str == "") a1Str = "1";
+            if (a1Str == "-") a1Str = "-1";
+
+            double a1 = double.Parse(a1Str, CultureInfo.InvariantCulture);
+            double a0 = double.Parse(a0Str, CultureInfo.InvariantCulture);
+
+            return Tuple.Create(a1, a0);
+        }
+
+        // --- Método Principal para Recalcular R (Punto 5 del Algoritmo) ---
+        public Unidad3Resultado CalcularCorrelacionRectaModificada(Unidad3ModificadaParam param)
+        {
+            var resultado = new Unidad3Resultado();
+            List<xy> PuntosCargados = param.Puntos;
+            int n = PuntosCargados.Count;
+
+            if (n == 0)
+            {
+                resultado.MensajeEfectividadAjuste = "No hay puntos cargados.";
+                return resultado;
+            }
+
+            try
+            {
+                double sumY = 0;
+                // Adaptado a List<xy>
+                foreach (var punto in PuntosCargados)
+                {
+                    sumY += punto.Y;
+                }
+
+                // Obtener coeficientes a1 y a0 de la función modificada
+                var coeficientes = ObtenerCoeficientesFuncion(param.FuncionModificada);
+                double a1 = coeficientes.Item1;
+                double a0 = coeficientes.Item2;
+
+                double st = 0;
+                double sr = 0;
+                double y_bar = sumY / n;
+
+                // Adaptado a List<xy>
+                foreach (var punto in PuntosCargados)
+                {
+                    double x = punto.X;
+                    double y = punto.Y;
+
+                    st += Math.Pow(y - y_bar, 2); // Fórmula St correcta
+
+                    double y_predicho = a1 * x + a0;
+                    sr += Math.Pow(y - y_predicho, 2);
+                }
+
+                // Cálculo de r
+                double r_cuadrado;
+                if (st == 0)
+                {
+                    r_cuadrado = 1.0;
+                }
+                else
+                {
+                    r_cuadrado = (st - sr) / st;
+                }
+
+                double r = Math.Sqrt(Math.Abs(r_cuadrado));
+                if (a1 < 0 && r > 0) r = -r; // Asignar signo de la pendiente
+
+                double efectividad = Math.Abs(r) * 100;
+
+                resultado.Funcion = param.FuncionModificada;
+                resultado.PorcentajeEfectividad = $"{efectividad:F2}%";
+
+                if (Math.Abs(r) >= param.Tolerancia)
+                {
+                    resultado.MensajeEfectividadAjuste = $"El ajuste MODIFICADO es EFECTIVO. |r| ({Math.Abs(r):F4}) es mayor o igual a la Tolerancia ({param.Tolerancia:F4}).";
+                }
+                else
+                {
+                    resultado.MensajeEfectividadAjuste = $"El ajuste MODIFICADO NO ES EFECTIVO. |r| ({Math.Abs(r):F4}) es menor a la Tolerancia ({param.Tolerancia:F4}).";
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado.MensajeEfectividadAjuste = "Error al recalcular: " + ex.Message;
             }
 
             return resultado;

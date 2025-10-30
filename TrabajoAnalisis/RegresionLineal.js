@@ -11,6 +11,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+// -------------------------------------------------------------------
+//  1. VARIABLES GLOBALES
+// (Para guardar los datos del primer cálculo y usarlos en el recálculo)
+// -------------------------------------------------------------------
+let puntosGlobales = [];
+let toleranciaGlobal = 0.8;
+
+
 // Contador global para IDs de puntos
 let puntoIdCounter = 0;
 
@@ -36,9 +44,10 @@ function agregarFilaPunto(defaultX = 0, defaultY = 0) {
 }
 
 function eliminarFilaPunto(id) {
-
     const row = document.getElementById(`punto-row-${id}`);
     if (row) {
+        // Nota: Decrementar el counter global aquí puede ser problemático si se borran 
+        // puntos intermedios, pero seguimos la lógica del archivo original.
         id = puntoIdCounter--;
         row.remove();
     }
@@ -60,22 +69,28 @@ function obtenerPuntos() {
     return puntos;
 }
 
+// -------------------------------------------------------------------
+//  2. CÁLCULO ORIGINAL (MODIFICADO)
+// (Guarda los puntos y la tolerancia en las variables globales)
+// -------------------------------------------------------------------
 function calcularRegresion() {
-    const tolerancia = parseFloat(document.getElementById('tolerancia').value);
+    // Guardar los valores en las variables globales
+    toleranciaGlobal = parseFloat(document.getElementById('tolerancia').value);
     const grado = parseInt(document.getElementById('grado').value);
-    const puntos = obtenerPuntos();
+    puntosGlobales = obtenerPuntos(); // Guardar puntos
+
     const resultadoDiv = document.getElementById('resultado');
 
     // Validación mínima de datos
-    if (puntos.length < 2) {
+    if (puntosGlobales.length < 2) {
         resultadoDiv.innerHTML = `<p style="color:red;">Error: Se necesitan al menos 2 puntos para la regresión.</p>`;
         return;
     }
 
     const datosRegresion = {
-        Tolerancia: tolerancia,
+        Tolerancia: toleranciaGlobal,
         Grado: grado,
-        Puntos: puntos
+        Puntos: puntosGlobales
     };
 
     console.log('Enviando datos:', datosRegresion);
@@ -97,7 +112,8 @@ function calcularRegresion() {
         })
         .then(data => {
             console.log('Respuesta de la API:', data);
-            mostrarResultado(data, puntos);
+            // Usar los puntos globales para mostrar el resultado
+            mostrarResultado(data, puntosGlobales);
         })
         .catch(error => {
             console.error('Error al enviar los datos:', error);
@@ -105,8 +121,21 @@ function calcularRegresion() {
         });
 }
 
+// -------------------------------------------------------------------
+// 3. MOSTRAR RESULTADO (MODIFICADO)
+// (Muestra la sección "Modificar Recta" y asigna el evento al nuevo botón)
+// -------------------------------------------------------------------
 function mostrarResultado(data, puntos) {
     const resultadoDiv = document.getElementById('resultado');
+
+    // Referencias a los nuevos elementos del HTML
+    const modificarContainer = document.getElementById('modificar-recta-container');
+    const inputFuncionModificada = document.getElementById('funcion-modificada');
+    const btnRecalcular = document.getElementById('btn-recalcular-r');
+    const resultadoModificadoDiv = document.getElementById('resultado-modificado');
+
+    // Limpiar resultado modificado anterior
+    resultadoModificadoDiv.innerHTML = '';
 
     if (!data.funcion || data.funcion === "N/A") {
         resultadoDiv.innerHTML = `
@@ -114,12 +143,12 @@ function mostrarResultado(data, puntos) {
                 <strong>Error:</strong> ${data.mensajeEfectividadAjuste}
             </div>`;
 
-        // Limpiar el gráfico
-        ggbApplet.evalCommand('ClearAll()');
+        modificarContainer.style.display = 'none'; // Ocultar si hay error
+        graficarRegresion(puntos, null); // Limpiar gráfico
         return;
     }
 
-    // 1. Mostrar resultados
+    // 1. Mostrar resultados Originales
     const efectividadColor = data.mensajeEfectividadAjuste.includes('EFECTIVO') ? '#2e7d32' : '#c0392b';
     const efectividadBg = data.mensajeEfectividadAjuste.includes('EFECTIVO') ? '#c8e6c9' : '#f9e6e6';
 
@@ -134,12 +163,72 @@ function mostrarResultado(data, puntos) {
         </div>
     `;
 
-    // 2. Graficar en GeoGebra
+    // 2. Graficar en GeoGebra (el gráfico original)
     graficarRegresion(puntos, data.funcion);
+
+    // 3. Mostrar y configurar la sección de modificación
+    modificarContainer.style.display = 'block'; // Mostrar la sección oculta
+    inputFuncionModificada.value = data.funcion; // Llenar con la función redondeada
+
+    // Asignar el evento al botón de recalcular
+    btnRecalcular.onclick = function () {
+        recalcularCorrelacion(inputFuncionModificada.value);
+    };
 }
 
+
+// -------------------------------------------------------------------
+//  4. NUEVA FUNCIÓN
+// (Se llama al presionar el botón naranja "Recalcular")
+// -------------------------------------------------------------------
+function recalcularCorrelacion(funcionModificada) {
+
+    const resultadoModificadoDiv = document.getElementById('resultado-modificado');
+    resultadoModificadoDiv.innerHTML = '<p>Recalculando...</p>';
+
+    // Usar los datos globales guardados
+    const datosRecalculo = {
+        FuncionModificada: funcionModificada,
+        Puntos: puntosGlobales,
+        Tolerancia: toleranciaGlobal
+    };
+
+    fetch('http://localhost:5125/api/Unidad3/recalcular-correlacion', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(datosRecalculo)
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Mostrar el resultado del recálculo
+            const efectividadColor = data.mensajeEfectividadAjuste.includes('EFECTIVO') ? '#2e7d32' : '#c0392b';
+            const efectividadBg = data.mensajeEfectividadAjuste.includes('EFECTIVO') ? '#c8e6c9' : '#f9e6e6';
+
+            resultadoModificadoDiv.innerHTML = `
+            <h4 style="margin-bottom: 5px;">Resultado de la Recta Modificada</h4>
+            <p><strong>Funcion:</strong> <code>${data.funcion}</code></p>
+            <p><strong>Nueva Efectividad (r*100):</strong> ${data.porcentajeEfectividad}</p>
+            <div style="padding: 10px; border-radius: 5px; background: ${efectividadBg}; color: ${efectividadColor}; border: 1px solid ${efectividadColor};">
+                <strong>Mensaje de Ajuste:</strong> ${data.mensajeEfectividadAjuste}
+            </div>
+        `;
+
+            // Graficar la NUEVA recta modificada en GeoGebra
+            graficarRegresion(puntosGlobales, data.funcion);
+        })
+        .catch(error => {
+            resultadoModificadoDiv.innerHTML = `<p style="color:red;">Error al recalcular: ${error.message}</p>`;
+        });
+}
+
+
+// -------------------------------------------------------------------
+// 5. GRAFICADOR (MODIFICADO)
+// (Limpia los objetos antiguos antes de dibujar los nuevos)
+// -------------------------------------------------------------------
 function graficarRegresion(puntos, funcion) {
-    // 1. Obtener la referencia global de GeoGebra
     const applet = ggbApplet;
 
     if (!applet || typeof applet.evalCommand !== 'function') {
@@ -147,35 +236,38 @@ function graficarRegresion(puntos, funcion) {
         return;
     }
 
-    // Limpieza de Gráfica: Usamos 'BorraTodo' (comando en español).
-    // Si falla (como ZoomContent), lo envolvemos en un try/catch para que no detenga el script.
- 
+    // 1. Limpieza de Gráfica:
+    try {
+        // Borrar la función 'f' anterior
+        applet.deleteObject('f');
 
-    // 2. Graficar CADA PUNTO individualmente (Estilo Unidad 1)
-    const nombreListaPuntos = [];
+        // Borrar los puntos anteriores (P1, P2, ...)
+        // (Asumimos un máximo de 50 puntos para limpiar)
+        for (let i = 1; i <= 50; i++) {
+            applet.deleteObject(`P${i}`);
+        }
+    } catch (e) {
+        console.warn('Error al limpiar objetos (puede ser la primera ejecución).');
+    }
+
+    // Si la función es nula (en caso de error), solo limpiamos y salimos.
+    if (!funcion) return;
+
+    // 2. Graficar CADA PUNTO individualmente
     puntos.forEach((p, index) => {
         const puntoNombre = `P${index + 1}`;
-        nombreListaPuntos.push(puntoNombre);
-
-        // Comando: PuntoReg1 = (X, Y)
         const comandoPunto = `${puntoNombre} = (${p.X}, ${p.Y})`;
         applet.evalCommand(comandoPunto);
-
-        // Configurar estilo del punto
         applet.setColor(puntoNombre, 0, 0, 255); // Azul
         applet.setPointSize(puntoNombre, 5);
     });
 
-
     // 3. Graficar la Recta de Regresión
-
-    // Paso a. Limpiar la cadena: reemplazamos 'y = ' por 'f(x) = ', y quitamos '*' y comas.
     let funcionLimpia = funcion
-        .replace(/,/g, '.') // Garantizar punto decimal, si C# no lo hizo
+        .replace(/,/g, '.') // Garantizar punto decimal
         .replace('y =', 'f(x) =')
-        .replace(/\*x/g, 'x'); // Quitar el '*' si existe, para que quede 1.0000x
+        .replace(/\*x/g, 'x'); // Quitar el '*' si existe
 
-    // Comando: f(x) = 1.0000x + 1.0000
     applet.evalCommand(funcionLimpia);
 
     // 4. Configurar el estilo de la recta 'f'

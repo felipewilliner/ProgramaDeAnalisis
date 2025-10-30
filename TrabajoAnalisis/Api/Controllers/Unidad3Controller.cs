@@ -37,6 +37,13 @@ namespace Api.Controllers
             return Ok(resultado);
         }
 
+        [HttpPost("recalcular-correlacion")]
+        public IActionResult PostRecalcularCorrelacion([FromBody] Unidad3ModificadaParam param)
+        {
+            var resultado = llamar.CalcularCorrelacionRectaModificada(param);
+            return Ok(resultado);
+        }
+
 
     }
 }
